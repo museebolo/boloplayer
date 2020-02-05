@@ -6,10 +6,10 @@ import subprocess
 import sys
 import time
 
-video='/home/bolo/Vidéos/ys-s03e12.avi'
+#video='/home/bolo/Vidéos/ys-s03e12.avi'
 mp_fifo_f = "/tmp/mpc"
 
-os.system('su bolo -c "DISPLAY=:0 mplayer {file} -input file={fifo}"'.format(file = video, fifo = mp_fifo_f))
+#os.system('su bolo -c "DISPLAY=:0 mplayer {file} -input file={fifo}"'.format(file = video, fifo = mp_fifo_f))
 #exec('mplayer', video, '-input', 'file={}'.format(mp_fifo_f))
 
 GPIO.setwarnings(False)

@@ -1,0 +1,3 @@
+# mkfifo /tmp/mpc &
+# omxplayer Vidéos/robin_masur_4_3.mp4 --subtitle Vidéos/robin_masur_4_3.srt --align center < /tmp/mpc &
+# /home/bolo/bin/bosp.py &
