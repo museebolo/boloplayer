@@ -5,11 +5,17 @@ import sys
 import time
 from omxplayer.player import OMXPlayer
 
-video='/home/bolo/Vidéos/robin_masur_4_3.mp4'
-video='/home/bolo/Vidéos/Adola_Fofana_test_barre_noire.mp4'
+def usage():
+    print("Usage: {name} file".format(name=sys.argv[0]))
+
+if len(sys.argv) != 2:
+    print("N'a pas le bon nombre d'argument")
+    usage()
+    sys.exit(1)
+
+video=sys.argv[1]
 intro_delay=3 # Délais pour bloquer le bouton pour qu'il évite de se répéter.
 intro_lock=False
-
 player = OMXPlayer(video,
         args=['--no-osd', '-o', 'local', '--loop', '--align', 'center'],
         dbus_name='org.mpris.MediaPlayer2.omxplayer',
@@ -23,7 +29,6 @@ GPIO.setup(gpio_led, GPIO.OUT)
 GPIO.output(gpio_led, GPIO.HIGH)
 gpio_but = 24
 GPIO.setup(gpio_but, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
 
 def restart(ch):
     global intro_lock
