@@ -22,6 +22,7 @@ import time
 ###
 intro_delay = 3                     # Délais pour bloquer le bouton pour qu'il évite de se répéter.
 bouncetime = 300                    # Anti-rebond du bouton [ms]
+blink_delay = 0.5                   # Délais du clignotement de la led [s].
 
 
 # Fonctions
@@ -34,6 +35,7 @@ def usage():
 # Interuption lorsque que le bouton est pressé.
 def restart(ch):
     global intro_lock
+    global led_blink
     print("Push")
     if int(player.position()) > intro_delay or intro_lock == False:
         print("Restart")
@@ -42,7 +44,9 @@ def restart(ch):
             player.set_position(0.0)
         if player.can_play():
             player.play()
-        GPIO.output(gpio_led, GPIO.LOW)
+        #GPIO.output(gpio_led, GPIO.LOW)
+        led_blink = False
+        print(led_blink)
         intro_lock = True
 
 # Signal pour quitter le programme
@@ -84,6 +88,31 @@ gpio_but = 24                       # Configuration du bouton play/restart
 GPIO.setup(gpio_but, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(gpio_but, GPIO.RISING, callback=restart, bouncetime=bouncetime)
 
+def led_on(ch):
+    GPIO.output(ch, GPIO.HIGH)
+
+def led_off(ch):
+    GPIO.output(ch, GPIO.LOW)
+
+time_tmp = 0.0
+led_state = False
+def led_blink_handler(ch, status):
+    #print(status)
+    global led_state
+    global time_tmp
+    if status == True:
+        if (time.time() - time_tmp) > float(blink_delay):
+            if led_state == True:
+                led_on(ch)
+                led_state = False
+            else:
+                led_off(ch)
+                led_state = True
+            time_tmp = time.time()
+    else:
+        led_on(ch)
+
+
 
 # Main
 ###
@@ -99,13 +128,17 @@ signal.signal(signal.SIGINT, signal_handler)
 
 # Boucle principale pour voir si la lecture est terminée.
 intro_lock = False
+led_blink = True
 while True:
+    print(led_blink)
+    led_blink_handler(gpio_led, led_blink)
     if int(player.position()) == int(player.duration()):
         player.pause()
         player.set_position(0.0)
         player.play()
         time.sleep(0.5)
         player.pause()
-        GPIO.output(gpio_led, GPIO.HIGH)
+        #GPIO.output(gpio_led, GPIO.HIGH)
+        led_blink = True
         intro_lock = False
     time.sleep(0.1)
