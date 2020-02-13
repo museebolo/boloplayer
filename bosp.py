@@ -36,17 +36,13 @@ def usage():
 def restart(ch):
     global intro_lock
     global led_blink
-    print("Push")
     if int(player.position()) > intro_delay or intro_lock == False:
-        print("Restart")
         if player.can_pause():
             player.pause()
             player.set_position(0.0)
         if player.can_play():
             player.play()
-        #GPIO.output(gpio_led, GPIO.LOW)
         led_blink = False
-        print(led_blink)
         intro_lock = True
 
 # Signal pour quitter le programme
@@ -75,7 +71,7 @@ if not video.exists():
     sys.exit(1)
 
 
-# Configuration du GPIO
+# GPIO
 ###
 GPIO.setwarnings(False)             # Désactive les messages d'avertissement.
 GPIO.setmode(GPIO.BCM)              # Utilise la numérotation des pattes BCM
@@ -97,11 +93,10 @@ def led_off(ch):
 time_tmp = 0.0
 led_state = False
 def led_blink_handler(ch, status):
-    #print(status)
     global led_state
     global time_tmp
     if status == True:
-        if (time.time() - time_tmp) > float(blink_delay):
+        if time.time() > (time_tmp + float(blink_delay)):
             if led_state == True:
                 led_on(ch)
                 led_state = False
@@ -130,7 +125,6 @@ signal.signal(signal.SIGINT, signal_handler)
 intro_lock = False
 led_blink = True
 while True:
-    print(led_blink)
     led_blink_handler(gpio_led, led_blink)
     if int(player.position()) == int(player.duration()):
         player.pause()
@@ -138,7 +132,6 @@ while True:
         player.play()
         time.sleep(0.5)
         player.pause()
-        #GPIO.output(gpio_led, GPIO.HIGH)
         led_blink = True
         intro_lock = False
     time.sleep(0.1)
