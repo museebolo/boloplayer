@@ -18,11 +18,13 @@ import sys
 import time
 
 
-# Variables globales
+# Configurations
 ###
 intro_delay = 3                     # Délais pour bloquer le bouton pour qu'il évite de se répéter.
 bouncetime = 300                    # Anti-rebond du bouton [ms]
 blink_delay = 0.5                   # Délais du clignotement de la led [s].
+
+stat_f = "/tmp/statistique.log"
 
 
 # Fonctions
@@ -36,6 +38,7 @@ def usage():
 def restart(ch):
     global intro_lock
     global led_blink
+    write_stat("{time} restart".format(time=time.time()))
     if int(player.position()) > intro_delay or intro_lock == False:
         if player.can_pause():
             player.pause()
@@ -50,6 +53,11 @@ def signal_handler(sig, frame):
     player.quit()
     print('\nYou pressed Ctrl+C!\n')
     sys.exit(0)
+
+def write_stat(text):
+    with open(stat_f, 'a') as f:
+        f.write(text)
+        f.write('\n')
 
 
 # Lecture et vérification des arguments
