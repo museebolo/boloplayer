@@ -118,8 +118,9 @@ player = OMXPlayer(video,
         dbus_name='org.mpris.MediaPlayer2.omxplayer',
         pause=True)
 
-# Capture le signal INT (^c) pour arrêter proprement le programme
-signal.signal(signal.SIGINT, signal_handler)
+# Capture les signaux pour arrêter proprement le programme
+signal.signal(signal.SIGINT, signal_handler)    # Singal INT (^c)
+signal.signal(signal.SIGTERM, signal_handler)   # Signal TERM (kill)
 
 # Boucle principale pour voir si la lecture est terminée.
 intro_lock = False
